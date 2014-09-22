@@ -131,16 +131,22 @@
 <div id="header-bar" class="swagger-ui-wrap">&nbsp;</div>
 
 <div style="background-color: rgba(0,0,0,.2);" id="token-bar">
+
     <select id="scheme">
         <option value="http">http</option>
         <option value="https">https</option>
     </select>
-    ://auth/
+
+    ://
+
     <select id="host">
         <option value="dev.bridgeit.io">dev.bridgeit.io</option>
         <option value="app.bridgeit.mobi">app.bridgeit.mobi</option>
     </select>
-    / <input id="realm" value="bridgeit.mobi" size="12" type="text">
+
+    /auth/
+
+    <input id="realm" value="bridgeit.mobi" size="12" type="text">
     /token/local?username= <input id="username" value="username" size="12"
                                   type="text">
     &amp;password= <input id="password" value="password" size="12" type="password">
