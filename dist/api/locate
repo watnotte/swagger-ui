@@ -1,0 +1,134 @@
+{
+    "apiVersion": "1.0.0",
+    "swaggerVersion": "1.2",
+    "basePath": "http://localhost:55020",
+    "resourcePath": "/locate",
+    "produces": [
+        "application/json"
+    ],
+    "apis": [
+        {
+            "path": "/locate/{realmId}/poi/{resourceId}",
+            "operations": [
+                {
+                    "authorizations": {},
+                    "summary": "Save a POI (Point of Interest)",
+                    "description": "Saves the coordinates for a POI (Point Of Interest) along with the associated meta data.",
+                    "consumes": [
+                        "application/json"
+                    ],
+                    "method": "POST",
+                    "nickname": "savePointOfInterest",
+                    "type": "PointOfInterest",
+                    "notes": "Notes go here",
+                    "parameters": [
+                        {
+                            "name": "realmId",
+                            "description": "The realm this resource data belongs to.",
+                            "required": true,
+                            "type": "string",
+                            "paramType": "path"
+                        },
+                        {
+                            "name": "resourceId",
+                            "description": "The unique id associated with the resource.",
+                            "required": false,
+                            "type": "string",
+                            "paramType": "path"
+                        },
+                        {
+                            "name": "access_token",
+                            "description": "A token granting permissions to use the service.",
+                            "required": true,
+                            "type": "string",
+                            "paramType": "query"
+                        },
+                        {
+                            "name": "body",
+                            "description": "The POI data to be stored.",
+                            "required": true,
+                            "type": "PointOfInterest",
+                            "paramType": "body"
+                        }
+                    ],
+                    "responseMessages": [
+                        {
+                            "code": 400,
+                            "message": "missing realm"
+                        },
+                        {
+                            "code": 401,
+                            "message": "invalid permission"
+                        },
+                        {
+                            "code": 500,
+                            "message": "server error"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "models": {
+        "Geometry": {
+            "id": "Geometry",
+            "required": [
+                "coordinates",
+                "type"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "defaultValue": "Point"
+                },
+                "coordinates": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 3,
+                    "items": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            }
+        },
+        "Location": {
+            "id": "Location",
+            "required": [
+                "geometry"
+            ],
+            "properties": {
+                "geometry": {
+                    "$ref": "Geometry"
+                }
+            }
+        },
+        "PointOfInterest": {
+            "id": "PointOfInterest",
+            "description": "The definition of a Location - a single GeoJSON Point",
+            "required": [
+                "username",
+                "lastUpdated",
+                "location"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "username desc"
+                },
+                "label": {
+                    "type": "string",
+                    "description": "human-friendly nickname for the device"
+                },
+                "lastUpdated": {
+                    "type": "string",
+                    "description": "date and time this record was saved (provided by the server)",
+                    "format": "date-time"
+                },
+                "location": {
+                    "$ref": "Location"
+                }
+            }
+        }
+    }
+}

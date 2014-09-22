@@ -676,6 +676,12 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
       }
     }
   };
+
+  //Re-apply authorizations so that the access_token is added as a query parameter.
+  console.log('Re-apply authorizations');
+  var e = (typeof window !== 'undefined' ? window : exports);
+  e.authorizations.apply(obj);
+
   new SwaggerHttp().execute(obj);
 }
 

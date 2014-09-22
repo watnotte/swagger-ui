@@ -1,0 +1,281 @@
+{
+    "swagger": 2.0,
+    "info": {
+        "title": "REST API Documentation and Client",
+        "description": "Dynamic client that you can use to exercise the API and try it out.",
+        "version": "1.0.0",
+        "license": {
+            "name": "TBA"
+        }
+    },
+    "host": "some.host.com",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "basePath": "/locate",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/{realmId}/locations/{resourceId}": {
+            "get": {
+                "summary": "Retrieve a Location",
+                "description": "Retrieve a single specific record associated with the resourceId.",
+                "parameters": [
+                    {
+                        "name": "realmId",
+                        "in": "path",
+                        "description": "The realm under which this resource is managed.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "description": "The unique id associated with this specific resource.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a single, specific record uniquely identified by the resourceId",
+                        "schema": {
+                            "$ref": "Location"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Parameters may be missing or incorrect.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unable to perform operation due to invalid permission.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Could not find the resource associated with this id.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Store a Location",
+                "description": "Save a specific Location using the provided resourceId as the key.",
+                "parameters": [
+                    {
+                        "name": "realmId",
+                        "in": "path",
+                        "description": "The realm under which this resource is managed.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "description": "The unique id associated with this specific resource.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The resource to be saved.",
+                        "required": true,
+                        "schema": {
+                            "$ref": "Location"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Returns a unique resource id URI in the Location: header as well as in the body of the response.",
+                        "schema": {
+                            "$ref": "Location"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Parameters may be missing or incorrect.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unable to perform operation due to invalid permission.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Could not find the resource associated with this id.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Remove a Location",
+                "description": "Delete a specific Location associated with the resourceId.",
+                "parameters": [
+                    {
+                        "name": "realmId",
+                        "in": "path",
+                        "description": "The realm under which this resource is managed.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "resourceId",
+                        "in": "path",
+                        "description": "The unique id associated with this specific resource.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Indicates that the resource was successfully deleted."
+                    },
+                    "400": {
+                        "description": "Invalid request. Parameters may be missing or incorrect.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unable to perform operation due to invalid permission.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Could not find the resource associated with this id.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error.",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Position": {
+            "description": "A single geographic point",
+            "type": "array",
+            "minItems": 2,
+            "items": [
+                {
+                    "description": "Longitude (-180 to 180)",
+                    "type": "number",
+                    "minimum": -180,
+                    "maximum": 180
+                },
+                {
+                    "description": "Latitude (-90 to 90)",
+                    "type": "number",
+                    "minimum": -90,
+                    "maximum": 90
+                }
+
+            ]
+        },
+        "Location": {
+            "description": "A Location represents a users location information (longitude, latitude) in GeoJSON format. It also includes related metadata and optional, custom properties.",
+            "type": "object",
+            "required": ["location"],
+            "properties": {
+                "label": {
+                    "description": "Human friendly name for this resource.",
+                    "type": "string"
+                },
+                "location": {
+                    "description": "The GeoJSON record for this resource.",
+                    "type": "object",
+                    "properties": {
+                        "geometry": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": ["Point"],
+                                    "default": "Point"
+                                },
+                                "coordinates": {
+                                    "$ref": "Position"
+                                }
+                            }
+                        },
+                        "properties": {
+                            "type": "object",
+                            "description": "Optional, additional properties of the resource.",
+                            "properties": {
+                                "altitude": {
+                                    "description": "The altitude of the Location in meters.",
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Locations": {
+            "type": "array",
+            "items": {
+                "$ref": "Location"
+            }
+        }
+    }
+}
