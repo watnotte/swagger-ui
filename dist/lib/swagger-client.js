@@ -624,8 +624,11 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
         requestUrl = requestUrl.replace(reg, this.encodePathParam(args[param.name]));
       }
       else if (param.in === 'query') {
-        if(querystring === '')
-          querystring += '?';
+        if(querystring === ''){
+            querystring += '?';
+        } else {
+            querystring += '&';
+        }
         if(typeof param.collectionFormat !== 'undefined') {
           var qp = args[param.name];
           if(Array.isArray(qp))
@@ -644,6 +647,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   }
   var scheme = this.schemes[0];
   var url = scheme + '://' + this.host + this.basePath + requestUrl + querystring;
+
 
   var obj = {
     url: url,
