@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=windows-1252" http-equiv="content-type">
+    <title>BridgeIt Services REST API Documentation and Client</title>
+    <link href="//fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet"
+          type="text/css">
+    <link href="css/reset.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="css/screen.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="css/reset.css" media="print" rel="stylesheet" type="text/css">
+    <link href="css/screen.css" media="print" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="lib/shred.bundle.js"></script>
+    <script src="lib/jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.slideto.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.wiggle.min.js" type="text/javascript"></script>
+    <script src="lib/jquery.ba-bbq.min.js" type="text/javascript"></script>
+    <script src="lib/handlebars-1.0.0.js" type="text/javascript"></script>
+    <script src="lib/underscore-min.js" type="text/javascript"></script>
+    <script src="lib/backbone-min.js" type="text/javascript"></script>
+    <script src="lib/swagger.js" type="text/javascript"></script>
+    <script src="lib/swagger-client.js" type="text/javascript"></script>
+    <script src="swagger-ui.js" type="text/javascript"></script>
+    <script src="lib/highlight.7.3.pack.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        //Retrieve a valid access_token that can be sent with each REST request.
+        function getAccessToken() {
+
+            var selOptions = document.getElementById('scheme');
+            var scheme = selOptions.options[selOptions.selectedIndex].value;
+            selOptions = document.getElementById('host');
+            var host = selOptions.options[selOptions.selectedIndex].value;
+            var realm = document.getElementById('realm').value;
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            var url = scheme + '://' + host + '/auth/' + realm + '/token/local?username=' + username + '&password=' + password;
+            console.log('url: ' + url);
+
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState != 4) return;
+                if (xmlhttp.status != 200 && xmlhttp.status != 304) {
+                    var errMsg = 'error: ' + xmlhttp.status;
+                    console.log(errMsg);
+                    document.getElementById('accessToken').value = errMsg;
+                    return;
+                }
+                var rawData = xmlhttp.responseText;
+                console.log('rawData: ' + rawData);
+                var parsedData = JSON.parse(rawData);
+                window.authorizations.add("key", new ApiKeyAuthorization("access_token", parsedData.access_token, "query"));
+                document.getElementById('accessToken').value = parsedData.access_token;
+            };
+
+            xmlhttp.open('GET', url, true);
+            xmlhttp.send();
+        }
+
+        function getQueryVariable(key) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == key) {
+                    return pair[1];
+                }
+            }
+            return(false);
+        }
+
+        //Set up the Swagger Client
+        $(function () {
+
+            //Figure out which API to serve up
+            var serviceAPI = getQueryVariable('service');
+            if(!serviceAPI){
+                serviceAPI = 'locate';
+            }
+
+
+            //Adjust URL to match environment
+            var docURL = '/static/api/api/' + serviceAPI + '-swagger.json';
+            if (window.location.hostname.indexOf('localhost') >= 0) {
+                docURL = '/api/' + serviceAPI + '-swagger.json';
+            }
+
+            console.log('API doc URL: ' + docURL);
+
+            window.swaggerUi = new SwaggerUi({
+                url: docURL,
+                dom_id: "swagger-ui-container",
+                supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+                onComplete: function (swaggerApi, swaggerUi) {
+                    log("loaded Swagger version of BridgeIt Services API");
+                },
+                onFailure: function (data) {
+                    log("problem loading Swagger version of BridgeIt Services API", data);
+                },
+                docExpansion: "list",
+                sorter: "alpha"
+            });
+
+            $('#accessToken').change(function () {
+                var currentToken = $('#accessToken')[0].value;
+                log("raw access_token: " + currentToken);
+                if (currentToken && currentToken.trim() != "") {
+                    log("added access_token: " + currentToken);
+                    window.authorizations.add("key", new ApiKeyAuthorization("access_token", currentToken, "query"));
+                }
+            });
+
+            window.swaggerUi.load();
+        });
+    </script>
+</head>
+<body class="swagger-section">
+
+<img title="BridgeIt Logo"
+     alt="BridgeIt Logo"
+     src="images/bridgeit-logo.png"><br>
+
+<div id="header-bar" class="swagger-ui-wrap">&nbsp;</div>
+
+<div style="background-color: rgba(0,0,0,.2);" id="token-bar">
+    <select id="scheme">
+        <option value="http">http</option>
+        <option value="https">https</option>
+    </select>
+    ://auth/
+    <select id="host">
+        <option value="dev.bridgeit.io">dev.bridgeit.io</option>
+        <option value="app.bridgeit.mobi">app.bridgeit.mobi</option>
+    </select>
+    / <input id="realm" value="bridgeit.mobi" size="12" type="text">
+    /token/local?username= <input id="username" value="deryksinotte" size="12"
+                                  type="text">
+    &amp;password= <input id="password" value="ices0ft22" size="12" type="password">
+    = <input id="accessToken" value="" size="42" type="text"> &nbsp; <input
+        id="getToken"
+        value="GET"
+        onclick="getAccessToken()"
+        type="button">
+</div>
+
+<div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
+<div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+</body>
+</html>
